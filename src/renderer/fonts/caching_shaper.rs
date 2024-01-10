@@ -83,7 +83,7 @@ impl CachingShaper {
     }
 
     pub fn update_font(&mut self, guifont_setting: &str) {
-        debug!("Updating font: {}", guifont_setting);
+        debug!(">>> Updating font: {}", guifont_setting);
 
         let options = match FontOptions::parse(guifont_setting) {
             Ok(opt) => opt,
@@ -97,7 +97,7 @@ impl CachingShaper {
     }
 
     pub fn update_font_options(&mut self, options: FontOptions) {
-        debug!("Updating font options: {:?}", options);
+        debug!(">>> Updating font options: {:?}", options);
 
         let keys = options
             .possible_fonts()

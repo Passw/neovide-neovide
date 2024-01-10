@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fmt, iter, num::ParseFloatError, sync::Arc};
 
 use itertools::Itertools;
-use log::warn;
+use log::{trace, warn};
 use serde::Deserialize;
 use skia_safe::{
     font_style::{Slant, Weight, Width},
@@ -142,6 +142,7 @@ impl FontOptions {
         let mut parts = guifont_setting
             .split(FONT_OPTS_SEPARATOR)
             .filter(|part| !part.is_empty());
+        trace!(">>> parts {:?} ", parts);
 
         if let Some(parts) = parts.next() {
             let parsed_font_list = parts
@@ -149,6 +150,7 @@ impl FontOptions {
                 .filter(|fallback| !fallback.is_empty())
                 .map(parse_font_name)
                 .collect_vec();
+            trace!(">>> parsed_font_list {:?} ", parsed_font_list);
 
             if !parsed_font_list.is_empty() {
                 font_options.normal = parsed_font_list
@@ -159,7 +161,63 @@ impl FontOptions {
                     })
                     .collect();
             }
+            trace!(">>> font_options {:?} ", font_options);
+
+            trace!(" font_options.normal.len() {}", font_options.normal.len());
+            for font in font_options.normal.iter_mut() {
+                trace!(" {:?}", font);
+                trace!(" {:?}", font.family);
+                trace!(" {}", font.family.as_str());
+                trace!(" {:?}", font.style);
+                trace!(" {:?}", font.family.split_whitespace().last());
+                //trace!(" {}", font.family.split_whitespace().last().cloned());
+                //trace!(" {}", font.family.split_whitespace().last().copied());
+                //trace!(" {}", font.family.split_whitespace().last().to_string());
+                trace!(" {}", font.family.split_whitespace().last().expect("REASON").to_string());
+
+                let (family, style) = font.as_family_and_font_style();
+                trace!("family: {:?}", family);
+                trace!("family: {}", family);
+                trace!("style: {:?}", style);
+
+                let mut weight = Weight::NORMAL;
+                let mut slant = Slant::Upright;
+
+                match font.family.split_whitespace().last() {
+                    Some("Thin") => {font.family = "Cascadia Code PL".to_string(); font.style = Some("Thin".to_string());},
+//                  Some("ExtraLight") => weight = Weight::EXTRA_LIGHT,
+                    Some("Light") => {font.family = "Cascadia Code PL".to_string(); font.style = Some("Light".to_string());},
+//                  Some("Light") => weight = Weight::LIGHT,
+//                  Some("Normal") => weight = Weight::NORMAL,
+//                  Some("Medium") => weight = Weight::MEDIUM,
+//                  Some("SemiBold") => weight = Weight::SEMI_BOLD,
+//                  Some("Bold") => weight = Weight::BOLD,
+//                  Some("ExtraBold") => weight = Weight::EXTRA_BOLD,
+//                  Some("Black") => weight = Weight::BLACK,
+//                  Some("ExtraBlack") => weight = Weight::EXTRA_BLACK,
+//                  Some("Italic") => slant = Slant::Italic,
+//                  Some("Oblique") => slant = Slant::Oblique,
+
+                    _ => {
+                       trace!("---");
+                   }
+                }
+
+//              let font_family_style = FontDescription {
+//                  family: "Cascadia Code PL".to_string(),
+//                    style: Some(weight.to_string()),
+//                  style: FontStyle::new(weight, Width::NORMAL, slant),
+//              };
+
+//              trace!(" font_family_style {:?}", font_family_style);
+
+//              *font = font_family_style.clone();
+
+
+            }
         }
+
+        trace!(">>> font_options 2 {:?} ", font_options);
 
         let mut style: Vec<String> = vec![];
         for part in parts {
@@ -184,9 +242,56 @@ impl FontOptions {
         } else {
             Some(style.into_iter().unique().sorted().join(" "))
         };
+        trace!(">>> style 1 {:?} ", style);
+
         for font in font_options.normal.iter_mut() {
             font.style = style.clone();
         }
+        trace!(">>> style 2 {:?} ", style);
+
+        trace!(">>> font_options 3 {:?} ", font_options);
+
+        trace!(" font_options.normal.len() {}", font_options.normal.len());
+        for font in font_options.normal.iter_mut() {
+            trace!(" {:?}", font);
+            trace!(" {:?}", font.family);
+            trace!(" {}", font.family.as_str());
+            trace!(" {:?}", font.style);
+            trace!(" {:?}", font.family.split_whitespace().last());
+            //trace!(" {}", font.family.split_whitespace().last().cloned());
+            //trace!(" {}", font.family.split_whitespace().last().copied());
+            //trace!(" {}", font.family.split_whitespace().last().to_string());
+            trace!(" {}", font.family.split_whitespace().last().expect("REASON").to_string());
+
+            let (family, style) = font.as_family_and_font_style();
+            trace!("family: {:?}", family);
+            trace!("family: {}", family);
+            trace!("style: {:?}", style);
+
+            let mut weight = Weight::NORMAL;
+            let mut slant = Slant::Upright;
+
+            match font.family.split_whitespace().last() {
+                Some("Thin") => {font.family = "Cascadia Code PL".to_string(); font.style = Some("Thin".to_string());},
+                //                  Some("ExtraLight") => weight = Weight::EXTRA_LIGHT,
+                Some("Light") => {font.family = "Cascadia Code PL".to_string(); font.style = Some("Light".to_string());},
+                //                  Some("Light") => weight = Weight::LIGHT,
+                //                  Some("Normal") => weight = Weight::NORMAL,
+                //                  Some("Medium") => weight = Weight::MEDIUM,
+                //                  Some("SemiBold") => weight = Weight::SEMI_BOLD,
+                //                  Some("Bold") => weight = Weight::BOLD,
+                //                  Some("ExtraBold") => weight = Weight::EXTRA_BOLD,
+                //                  Some("Black") => weight = Weight::BLACK,
+                //                  Some("ExtraBlack") => weight = Weight::EXTRA_BLACK,
+                //                  Some("Italic") => slant = Slant::Italic,
+                //                  Some("Oblique") => slant = Slant::Oblique,
+
+                _ => {
+                    trace!("---");
+                }
+            }
+        }
+
 
         Ok(font_options)
     }
