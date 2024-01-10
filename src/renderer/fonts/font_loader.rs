@@ -83,6 +83,8 @@ impl FontLoader {
 
     fn load(&mut self, font_key: FontKey) -> Option<FontPair> {
         trace!("Loading font {:?}", font_key);
+        // https://rust-skia.github.io/doc/skia_safe/type.FontMgr.html#method.family_names
+        trace!(">>>--- Loading font {:?}", self.font_mgr);
         if let Some(desc) = &font_key.font_desc {
             let (family, style) = desc.as_family_and_font_style();
             let typeface = self.font_mgr.match_family_style(family, style)?;
